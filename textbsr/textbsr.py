@@ -34,6 +34,7 @@ def load_file_from_url(url, model_dir=None, progress=True, file_name=None):
     return cached_file
 
 def bsr(input_path=None, bg_path=None, output_path=None, aligned=False, save_text=False, device=None):
+    print('Enter bsr')
     if input_path is None:
         exit('Input image path is none. Please see our document')
     
@@ -135,14 +136,21 @@ def bsr(input_path=None, bg_path=None, output_path=None, aligned=False, save_tex
         #####(2) Restore Each Region and Paste to the whole image
         #########################################################
         SQ, ori_texts, en_texts  = TextModel.handle_texts(img=img_L, bg=img_E, sf=scale_factor, is_aligned=aligned)
+        # print('SQ, ori_texts, en_texts', SQ, ori_texts, en_texts) 
+        if is_single_image: 
+            image_filename = os.path.join(E_path) 
+        else: 
+            image_filename = os.path.join(E_path, img_name +'_BSRGANText.png')
         if not aligned:
             if width_S == 0 or height_S == 0:
                 width_S = (width_L * scale_factor)
                 height_S = (height_L * scale_factor)
             SQ = cv2.resize(SQ.astype(np.float32), (width_S, height_S), interpolation=cv2.INTER_AREA)
-            cv2.imwrite(os.path.join(E_path, img_name +'_BSRGANText.png'), SQ[:,:,::-1])
+            print('not aligned. Writing to: ', image_filename)
+            cv2.imwrite(image_filename, SQ[:,:,::-1])
         else:
-            cv2.imwrite(os.path.join(E_path, img_name +'_BSRGANText.png'), en_texts[0][:,:,::-1])
+            print('aligned. Writing to: ', image_filename)
+            cv2.imwrite(image_filename, en_texts[0][:,:,::-1])
 
         ####################################
         #####(3) Save Cropped Results
