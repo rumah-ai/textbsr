@@ -48,11 +48,11 @@ def bsr(input_path=None, bg_path=None, output_path=None, aligned=False, save_tex
             if input_path[-1] == '/' or input_path[-1] == '\\':
                 input_path = input_path[:-1]
             output_path = osp.join(input_path + '_' + TIMESTAMP + '_BSRGAN-Text')
-    
-    if is_single_image:
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
     else:
-        os.makedirs(output_path, exist_ok=True)
+        if is_single_image:
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        else:
+            os.makedirs(output_path, exist_ok=True)
 
     lq_imgs = []
     sq_imgs = []
