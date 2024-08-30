@@ -35,23 +35,41 @@ def load_file_from_url(url, model_dir=None, progress=True, file_name=None):
 
 def bsr(input_path=None, bg_path=None, output_path=None, aligned=False, save_text=False, device=None):
     if input_path is None:
-        exit('input image path is none. Please see our document')
+        exit('Input image path is none. Please see our document')
+    
+    is_single_image = not os.path.isdir(input_path)
+
     if output_path is None:
         TIMESTAMP = time.strftime("%m-%d_%H-%M", time.localtime())
-        if input_path[-1] == '/' or input_path[-1] == '\\':
-            input_path = input_path[:-1]
-        output_path = osp.join(input_path+'_'+TIMESTAMP+'_BSRGAN-Text')
+        if is_single_image:
+            input_dir, input_file = os.path.split(input_path)
+            output_path = osp.join(input_dir, f"{os.path.splitext(input_file)[0]}_{TIMESTAMP}_BSRGAN-Text.png")
+        else:
+            if input_path[-1] == '/' or input_path[-1] == '\\':
+                input_path = input_path[:-1]
+            output_path = osp.join(input_path + '_' + TIMESTAMP + '_BSRGAN-Text')
+    
     os.makedirs(output_path, exist_ok=True)
 
     lq_imgs = []
     sq_imgs = []
-    lq_imgs = get_image_paths(input_path)
-    if len(lq_imgs) ==0:
-        exit('No Image in the LR path.')
+
+    if is_single_image:
+        lq_imgs.append(input_path)
+    else:
+        lq_imgs = get_image_paths(input_path)
+
+    if len(lq_imgs) == 0:
+        exit('No image found in the input path.')
+
     if bg_path is not None:
-        sq_imgs = get_image_paths(bg_path)
+        if is_single_image:
+            sq_imgs.append(bg_path)
+        else:
+            sq_imgs = get_image_paths(bg_path)
+        
         if len(sq_imgs) != len(lq_imgs):
-            exit('The LQ path has {} images, while the SR path has {} ones. Please check whether the two paths are consistent.'.format(len(lq_imgs), len(sq_imgs)))
+            exit('The number of input images and background images does not match.')
 
     scale_factor = 4 # upsample scale factor for the final output, fixed
     if device == None or device == 'gpu':
