@@ -16,7 +16,7 @@ textbsr -i [LR_TEXT_PATH] -b [BACKGROUND_SR_PATH]
 > - [BACKGROUND_SR_PATH] stores the results from any blind image super-resolution methods.
 > - If the text image is degraded severely, this method may still fail to obtain a plausible result.
 
-### Dependencies and Installation
+### Dependencies and Installation (see : requirements.txt)
 - numpy
 - torch>=1.8.1
 - torchvision>=0.9
@@ -27,6 +27,12 @@ textbsr -i [LR_TEXT_PATH] -b [BACKGROUND_SR_PATH]
 pip install textbsr
 ```
 
+``` 
+# Install from source 
+git clone https://github.com/csxmli2016/textbsr.git
+cd textbsr
+pip install -e . 
+```
 
 ### Basic Usage
 
