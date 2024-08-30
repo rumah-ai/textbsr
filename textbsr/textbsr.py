@@ -37,7 +37,7 @@ def bsr(input_path=None, bg_path=None, output_path=None, aligned=False, save_tex
     if input_path is None:
         exit('Input image path is none. Please see our document')
     
-    is_single_image = not os.path.isdir(input_path)
+    is_single_image = os.path.isfile(input_path)
 
     if output_path is None:
         TIMESTAMP = time.strftime("%m-%d_%H-%M", time.localtime())
@@ -49,7 +49,10 @@ def bsr(input_path=None, bg_path=None, output_path=None, aligned=False, save_tex
                 input_path = input_path[:-1]
             output_path = osp.join(input_path + '_' + TIMESTAMP + '_BSRGAN-Text')
     
-    os.makedirs(output_path, exist_ok=True)
+    if is_single_image:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    else:
+        os.makedirs(output_path, exist_ok=True)
 
     lq_imgs = []
     sq_imgs = []
